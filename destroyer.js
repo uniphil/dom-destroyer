@@ -1,6 +1,5 @@
 (function() {
 
-  var listeners = [];
   var mask = document.createElement('div');
   mask.style.pointerEvents = 'none';
   mask.style.position = 'absolute';
@@ -37,22 +36,24 @@
     event.preventDefault();
     var el = event.target;
     el.parentNode.removeChild(el);
-    mask.style.height = '0';
-    mask.style.width = '0';
   };
-  var escape = function() {
-    document.body.removeChild(mask);
+  var keydown = function(event) {
+    if (event.keyCode === 27)
+      stop_destroying();
   };
 
-  window.start_destroying = function start_destroying() {
-    document.querySelector('body').appendChild(mask);
-    listeners.push(document.addEventListener('mouseover', mouseover));
-    listeners.push(document.addEventListener('click', destroy));
-    listeners.push(document.addEventListener('keydown', function(event) {
-      if (event.keyCode === 27) {
-        escape();
-      }
-    }));
+  var stop_destroying = function() {
+    document.body.removeChild(mask);
+    document.removeEventListener('mouseover', mouseover);
+    document.removeEventListener('click', destroy);
+    document.removeEventListener('keydown', keydown);
+  };
+
+  var start_destroying = function start_destroying() {
+    document.body.appendChild(mask);
+    document.addEventListener('mouseover', mouseover);
+    document.addEventListener('click', destroy);
+    document.addEventListener('keydown', keydown);
   };
 
   start_destroying();
