@@ -40,6 +40,8 @@
     event.preventDefault();
     var el = event.target;
     el.parentNode.removeChild(el);
+    mask.style.height = '0';
+    mask.style.width = '0';
   };
   var keydown = function keydown(event) {
     if (event.keyCode === 27)
