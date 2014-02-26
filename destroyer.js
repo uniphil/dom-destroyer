@@ -1,6 +1,9 @@
 (function() {
+  if (window.show_mercy) {
+    window.show_mercy();
+    return;
+  }
 
-  var listeners = [];
   var mask = document.createElement('div');
   mask.style.pointerEvents = 'none';
   mask.style.position = 'absolute';
@@ -23,7 +26,7 @@
     return {left: left, top: top};
   };
 
-  var mouseover = function(event) {
+  var change_target = function change_target(event) {
     var el = event.target;
     var offset = page_offset(el);
     mask.style.width = el.offsetWidth + 'px';
@@ -31,7 +34,7 @@
     mask.style.height = el.offsetHeight + 'px';
     mask.style.top = offset.top + 'px';
   };
-  var destroy = function(event) {
+  var destroy = function destroy(event) {
     event.stopImmediatePropagation();
     event.stopPropagation();
     event.preventDefault();
@@ -40,20 +43,28 @@
     mask.style.height = '0';
     mask.style.width = '0';
   };
-  var escape = function() {
+  var maybe_show_mercy = function keydown(event) {
+    if (event.keyCode === 27)
+      stop_destroying();
+  };
+
+  var show_mercy = function show_mercy() {
     document.body.removeChild(mask);
+    document.removeEventListener('mouseover', change_target);
+    document.removeEventListener('click', destroy);
+    document.removeEventListener('keydown', maybe_show_mercy);
+
+    window.show_mercy = null;
   };
 
-  window.start_destroying = function start_destroying() {
-    document.querySelector('body').appendChild(mask);
-    listeners.push(document.addEventListener('mouseover', mouseover));
-    listeners.push(document.addEventListener('click', destroy));
-    listeners.push(document.addEventListener('keydown', function(event) {
-      if (event.keyCode === 27) {
-        escape();
-      }
-    }));
+  var arm_destroyer = function arm_destroyer() {
+    document.body.appendChild(mask);
+    document.addEventListener('mouseover', change_target);
+    document.addEventListener('click', destroy);
+    document.addEventListener('keydown', maybe_show_mercy);
+
+    window.show_mercy = show_mercy;
   };
 
-  start_destroying();
+  arm_destroyer();
 })();
