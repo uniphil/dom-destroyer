@@ -1,6 +1,6 @@
 (function() {
-  if (window.__global_dom_destroyer_stop) {
-    window.__global_dom_destroyer_stop();
+  if (window.show_mercy) {
+    window.show_mercy();
     return;
   }
 
@@ -26,7 +26,7 @@
     return {left: left, top: top};
   };
 
-  var mouseover = function mouseover(event) {
+  var change_target = function change_target(event) {
     var el = event.target;
     var offset = page_offset(el);
     mask.style.width = el.offsetWidth + 'px';
@@ -43,29 +43,28 @@
     mask.style.height = '0';
     mask.style.width = '0';
   };
-  var keydown = function keydown(event) {
+  var maybe_show_mercy = function keydown(event) {
     if (event.keyCode === 27)
       stop_destroying();
   };
 
-  var stop_destroying = function stop_destroying() {
-    console.log('stopping');
+  var show_mercy = function show_mercy() {
     document.body.removeChild(mask);
-    document.removeEventListener('mouseover', mouseover);
+    document.removeEventListener('mouseover', change_target);
     document.removeEventListener('click', destroy);
-    document.removeEventListener('keydown', keydown);
+    document.removeEventListener('keydown', maybe_show_mercy);
 
-    window.__global_dom_destroyer_stop = null;
+    window.show_mercy = null;
   };
 
-  var start_destroying = function start_destroying() {
+  var arm_destroyer = function arm_destroyer() {
     document.body.appendChild(mask);
-    document.addEventListener('mouseover', mouseover);
+    document.addEventListener('mouseover', change_target);
     document.addEventListener('click', destroy);
-    document.addEventListener('keydown', keydown);
+    document.addEventListener('keydown', maybe_show_mercy);
 
-    window.__global_dom_destroyer_stop = stop_destroying;
+    window.show_mercy = show_mercy;
   };
 
-  start_destroying();
+  arm_destroyer();
 })();
