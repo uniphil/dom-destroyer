@@ -45,7 +45,7 @@
   };
   var maybe_show_mercy = function keydown(event) {
     if (event.keyCode === 27)
-      stop_destroying();
+      show_mercy();
   };
 
   var show_mercy = function show_mercy() {
