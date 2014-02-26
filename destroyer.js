@@ -1,4 +1,8 @@
 (function() {
+  if (window.__global_dom_destroyer_active)
+    return;
+
+  window.__global_dom_destroyer_active = true;
 
   var mask = document.createElement('div');
   mask.style.pointerEvents = 'none';
@@ -47,6 +51,8 @@
     document.removeEventListener('mouseover', mouseover);
     document.removeEventListener('click', destroy);
     document.removeEventListener('keydown', keydown);
+
+    window.__global_dom_destroyer_active = false;
   };
 
   var start_destroying = function start_destroying() {
