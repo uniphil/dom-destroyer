@@ -1,8 +1,8 @@
 (function() {
-  if (window.__global_dom_destroyer_active)
+  if (window.__global_dom_destroyer_stop) {
+    window.__global_dom_destroyer_stop();
     return;
-
-  window.__global_dom_destroyer_active = true;
+  }
 
   var mask = document.createElement('div');
   mask.style.pointerEvents = 'none';
@@ -26,7 +26,7 @@
     return {left: left, top: top};
   };
 
-  var mouseover = function(event) {
+  var mouseover = function mouseover(event) {
     var el = event.target;
     var offset = page_offset(el);
     mask.style.width = el.offsetWidth + 'px';
@@ -34,25 +34,26 @@
     mask.style.height = el.offsetHeight + 'px';
     mask.style.top = offset.top + 'px';
   };
-  var destroy = function(event) {
+  var destroy = function destroy(event) {
     event.stopImmediatePropagation();
     event.stopPropagation();
     event.preventDefault();
     var el = event.target;
     el.parentNode.removeChild(el);
   };
-  var keydown = function(event) {
+  var keydown = function keydown(event) {
     if (event.keyCode === 27)
       stop_destroying();
   };
 
-  var stop_destroying = function() {
+  var stop_destroying = function stop_destroying() {
+    console.log('stopping');
     document.body.removeChild(mask);
     document.removeEventListener('mouseover', mouseover);
     document.removeEventListener('click', destroy);
     document.removeEventListener('keydown', keydown);
 
-    window.__global_dom_destroyer_active = false;
+    window.__global_dom_destroyer_stop = null;
   };
 
   var start_destroying = function start_destroying() {
@@ -60,6 +61,8 @@
     document.addEventListener('mouseover', mouseover);
     document.addEventListener('click', destroy);
     document.addEventListener('keydown', keydown);
+
+    window.__global_dom_destroyer_stop = stop_destroying;
   };
 
   start_destroying();
