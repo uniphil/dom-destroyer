@@ -1,6 +1,7 @@
+"use strict";
 (function() {
-  if (window.show_mercy) {
-    window.show_mercy();
+  if (window.__dom_destroyer_disarm) {
+    window.__dom_destroyer_disarm();
     return;
   }
 
@@ -39,31 +40,39 @@
     event.stopPropagation();
     event.preventDefault();
     var el = event.target;
+    if (!el) return;
     el.parentNode.removeChild(el);
     mask.style.height = '0';
     mask.style.width = '0';
   };
-  var maybe_show_mercy = function keydown(event) {
-    if (event.keyCode === 27)
-      show_mercy();
+  var maybe_disarm = function keydown(event) {
+    if (event.keyCode === 27) {  // ESC
+      disarm();
+    }
   };
 
-  var show_mercy = function show_mercy() {
+  var disarm = function disarm() {
     document.body.removeChild(mask);
     document.removeEventListener('mouseover', change_target);
-    document.removeEventListener('click', destroy);
-    document.removeEventListener('keydown', maybe_show_mercy);
+    document.removeEventListener('click', destroy, true);
+    document.removeEventListener('keydown', maybe_disarm);
+    window.removeEventListener('blur', disarm);
 
-    window.show_mercy = null;
+    chrome.runtime.sendMessage({ armed: false });
+
+    window.__dom_destroyer_disarm = null;
   };
 
   var arm_destroyer = function arm_destroyer() {
     document.body.appendChild(mask);
     document.addEventListener('mouseover', change_target);
-    document.addEventListener('click', destroy);
-    document.addEventListener('keydown', maybe_show_mercy);
+    document.addEventListener('click', destroy, true);
+    document.addEventListener('keydown', maybe_disarm);
+    window.addEventListener('blur', disarm);
 
-    window.show_mercy = show_mercy;
+    chrome.runtime.sendMessage({ armed: true });
+
+    window.__dom_destroyer_disarm = disarm;
   };
 
   arm_destroyer();

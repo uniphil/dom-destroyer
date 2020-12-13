@@ -1,18 +1,23 @@
 {
   "manifest_version": 2,
   "name": "DOM Destroyer",
-  "description": "Remove stuff from websites like say an annoying sticky header, with two clicks.",
-  "version" : "0.1",
+  "description": "Delete anything on a website with a click.",
+  "version" : "0.2",
   "browser_action": {
-    "default_title": "Destroy DOM Nodes",
+    "default_title": "Destroy DOM",
     "default_icon" : "destroy_128.png"
   },
   "permissions": [
     "activeTab"
   ],
   "background": {
-    "scripts": ["background.js"],
-    "persistent": false
+    "scripts": ["background.js"]
+  },
+  "commands": {
+    "toggle-armed": {
+      "suggested_key": { "default": "Ctrl+Shift+L" },
+      "description": "Toggle DOM destruction mode"
+    }
   },
   "homepage_url" : "http://github.com/uniphil/dom-destroyer"
 }
