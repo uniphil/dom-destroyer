@@ -16,9 +16,10 @@
   mask.style.border = '2px dashed hsla(350, 50%, 50%, 0.5)'
   mask.style.background = 'radial-gradient(circle, hsla(350, 50%, 80%, 0) 25%, hsla(350, 50%, 50%, 0.25))';
   mask.style.zIndex = '9999999';
-  mask.style.transition = 'top 0.1s, left 0.1s, width 0.1s, height 0.1s';
+  mask.style.transition = 'all 0.1s';
 
   var current_target;
+  var soft_disarm = false;
 
   var lock_on = function lock_on(el, rect) {
     current_target = el;
@@ -32,6 +33,7 @@
 
   var _rafref;
   var follow = function() {
+    if (soft_disarm) return;
     cancelAnimationFrame(_rafref);
     _rafref = requestAnimationFrame(() => {
       if (current_target) lock_on(current_target);
@@ -60,11 +62,44 @@
   };
 
   var destroy = function destroy(event) {
+    if (soft_disarm) return;
     event.stopImmediatePropagation();
     event.stopPropagation();
     event.preventDefault();
+
     if (!current_target) return;
-    current_target.parentNode.removeChild(current_target);
+    var rect = current_target.getBoundingClientRect();
+
+    var replacement = document.createElement('div');
+    replacement.style.background = 'hsl(350, 50%, 50%)';
+    replacement.style.height = rect.height + 'px';
+    replacement.style.width = rect.width + 'px';
+    replacement.style.opacity = '1'
+    replacement.style.transition = 'all 0.2s';
+
+    var target_style = getComputedStyle(current_target);
+    if (target_style.position !== 'static') {
+      replacement.style.position = target_style.position;
+      replacement.style.left = target_style.left;
+      replacement.style.top = target_style.top;
+    }
+    current_target.replaceWith(replacement);
+
+    // need the next-next frame to ensure the transition happens :(
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      replacement.style.height = '0px';
+      replacement.style.width = '0px';
+      replacement.style.opacity = '0.5';
+    }));
+
+    setTimeout(() => {
+      replacement.remove();
+      soft_disarm = false;
+      mask.style.opacity = '1';
+    }, 200);
+
+    soft_disarm = true;
+    mask.style.opacity = '0';
     lock_off();
   };
 
@@ -75,7 +110,7 @@
   };
 
   var disarm = function disarm() {
-    document.body.removeChild(mask);
+    mask.remove();
     document.removeEventListener('mouseover', change_target);
     document.removeEventListener('click', destroy, true);
     document.removeEventListener('keydown', maybe_disarm);
