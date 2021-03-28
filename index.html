@@ -1,0 +1,105 @@
+<!doctype html>
+<meta charset="utf-8" />
+<title>dom-destroyer test page</title>
+<style>
+  body {
+    font-family: sans-serif;
+  }
+  h1 {
+    font-size: 1.5em;
+    margin: 0.5em 0 0;
+  }
+  .header .hint {
+    font-size: 0.85em;
+    font-style: italic;
+    margin: 0.5em 0;
+  }
+  .cases {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .case {
+    background: #cfc;
+    display: flex;
+    height: 200px;
+    flex: 0 0 300px;
+    justify-content: flex-grow;
+    margin: 0.5em;
+    position: relative;
+  }
+  .target {
+    background: #eee;
+    flex-grow: 1;
+    padding: 1em;
+  }
+
+  .relative-2 {
+    display: block;
+    position: relative;
+    left: 0.5em;
+    top: 0.5em;
+  }
+
+  .absolute-3 {
+    display: block;
+    position: absolute;
+    right: 0;
+    top: -0.5em;
+  }
+</style>
+
+<div class="header">
+  <h1>dom destroyer target practice</h1>
+  <p class="hint">hint: refresh the page to get everything back. hit <code>esc</code> to stop destroying.</p>
+</style>
+
+<p><button id="toggle">enable</button></p>
+
+
+<div class="cases">
+  <div class="case">
+    <div class="target">
+      <h3>1. Simple</h3>
+      <p>just a plain old div&hellip;</p>
+    </div>
+  </div>
+
+  <div class="case">
+    <div class="target relative-2">
+      <h3>2. Relative</h3>
+      <p>slightly offset</p>
+    </div>
+  </div>
+
+  <div class="case">
+    <div class="target absolute-3">
+      <h3>3. Absolute</h3>
+      <p>for some reason</p>
+    </div>
+  </div>
+
+</div>
+
+
+<script>;(w => {
+
+const button = document.getElementById('toggle');
+button.addEventListener('click', () => {
+  const s = w.document.createElement('script');
+  s.src = ('./destroyer.js');
+  w.document.body.appendChild(s);
+});
+
+// stub the extension api
+w.chrome = { runtime: { sendMessage: ({ armed }) => {
+  if (armed) {
+    button.innerHTML = '<em>ready&hellip;</em>';
+  } else {
+    if (!w.document.body.contains(button)) w.document.body.appendChild(button);
+    button.innerText = 'enable';
+  }
+} } };
+
+})(window);</script>
