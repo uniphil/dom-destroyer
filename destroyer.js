@@ -18,11 +18,11 @@
   mask.style.zIndex = '9999999';
 
   var page_offset = function page_offset(el) {
-    var left = 0;
-    var top = 0;
+    var left = -el.clientLeft;
+    var top = -el.clientTop;
     while(el) {
-      left += el.offsetLeft;
-      top += el.offsetTop;
+      left += el.offsetLeft + el.clientLeft;
+      top += el.offsetTop + el.clientTop;
       el = el.offsetParent;
     }
     return {left: left, top: top};
