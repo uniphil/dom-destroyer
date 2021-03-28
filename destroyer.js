@@ -17,6 +17,21 @@
   mask.style.background = 'radial-gradient(circle, hsla(350, 50%, 80%, 0) 25%, hsla(350, 50%, 50%, 0.25))';
   mask.style.zIndex = '9999999';
 
+  var stack_bottom = function stack_bottom(el) {
+    // walk up the DOM while parent nodes are exactly the same size & place
+    while (el.parentNode) {
+      if (el.clientLeft   !== 0 ||
+          el.clientTop    !== 0 ||
+          el.offsetLeft   !== 0 ||
+          el.offsetTop    !== 0 ||
+          el.offsetWidth  !== el.parentNode.offsetWidth ||
+          el.offsetHeight !== el.parentNode.offsetHeight
+      ) break;
+      el = el.parentNode;
+    }
+    return el;
+  }
+
   var page_offset = function page_offset(el) {
     var left = -el.clientLeft;
     var top = -el.clientTop;
@@ -29,7 +44,7 @@
   };
 
   var change_target = function change_target(event) {
-    var el = event.target;
+    var el = stack_bottom(event.target);
     var offset = page_offset(el);
     mask.style.width = el.offsetWidth + 'px';
     mask.style.left = offset.left + 'px';
@@ -40,7 +55,7 @@
     event.stopImmediatePropagation();
     event.stopPropagation();
     event.preventDefault();
-    var el = event.target;
+    var el = stack_bottom(event.target);
     if (!el) return;
     el.parentNode.removeChild(el);
     mask.style.height = '0';
