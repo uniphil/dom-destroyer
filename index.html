@@ -48,6 +48,21 @@
     right: 0;
     top: -0.5em;
   }
+
+  .fixed-4 {
+    display: block;
+    position: fixed;
+    right: 0.5em;
+    top: 5.5em;
+  }
+
+  .button-5 button {
+    font-size: 1.5em;
+  }
+
+  .link-6 a {
+    font-size: 1.5em;
+  }
 </style>
 
 <div class="header">
@@ -78,6 +93,27 @@
       <h3>3. Absolute</h3>
       <p>for some reason</p>
     </div>
+  </div>
+
+  <div class="case">
+    <div class="target fixed-4">
+      <h3>4. Fixed</h3>
+      <p>luv takin up your screen space</p>
+    </div>
+  </div>
+
+  <div class="case">
+    <button onclick="alert('a complaint')" class="target button-5">
+      <h3>5. Button no-clicky</h3>
+      <p>destroy this button and don't let it complain:</p>
+    </button>
+  </div>
+
+  <div class="case">
+    <a href="https://example.com" class="target link-6">
+      <h3>6. Link please</h3>
+      <p>take out the link but don't go anywhere:</p>
+    </a>
   </div>
 
 </div>
