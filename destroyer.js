@@ -6,14 +6,15 @@
   }
 
   var mask = document.createElement('div');
+  mask.style.boxSizing = 'border-box';
   mask.style.pointerEvents = 'none';
   mask.style.position = 'absolute';
   mask.style.top = '0';
   mask.style.left = '0';
   mask.style.height = '0';
   mask.style.width = '0';
-  mask.style.background = 'rgba(127, 0, 0, 0.5)';
-  mask.style.boxShadow = '0 0 8px red';
+  mask.style.border = '2px dashed hsla(350, 50%, 50%, 0.5)'
+  mask.style.background = 'radial-gradient(circle, hsla(350, 50%, 80%, 0) 25%, hsla(350, 50%, 50%, 0.25))';
   mask.style.zIndex = '9999999';
 
   var page_offset = function page_offset(el) {
