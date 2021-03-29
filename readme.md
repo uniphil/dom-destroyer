@@ -1,6 +1,9 @@
 dom destroyer
 =============
 
+Get the [firefox addon](https://addons.mozilla.org/en-US/firefox/addon/dom-destroyer/) or the [chrome extension](https://chrome.google.com/webstore/detail/dom-destroyer/cgkjfaoibdibeghgeplabcbineebklgf) and clear any web page of annoying ads, overlays, sidebars, anything... just click and it's gone.
+
+
 manual target practice tests
 ----------------------------
 
