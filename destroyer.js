@@ -18,6 +18,10 @@
   mask.style.zIndex = '9999999';
   mask.style.transition = 'all 0.1s';
 
+  var iframe_blinder = document.createElement('div');
+  iframe_blinder.style.position = 'fixed';
+  iframe_blinder.style.zIndex = '9999998';
+
   var current_target;
   var soft_disarm = false;
 
@@ -48,6 +52,20 @@
   var change_target = function change_target(event) {
     var el = event.target;
     var rect = el.getBoundingClientRect();
+
+    if (el === iframe_blinder) return;
+    iframe_blinder.remove();
+
+    // if we are on an iframe, put a blinder on top so it doesn't steal clicks
+    if (el.tagName.toLowerCase() === 'iframe') {
+      document.body.appendChild(iframe_blinder);
+      iframe_blinder.style.width = rect.width + 'px';
+      iframe_blinder.style.left =  rect.left + 'px';
+      iframe_blinder.style.height = rect.height + 'px';
+      iframe_blinder.style.top = rect.top + 'px';
+    }
+
+    // get to the bottom of a nested container stack
     while (el.parentNode && el.parentNode.getBoundingClientRect) {
       var parentRect = el.parentNode.getBoundingClientRect();
       if (rect.top    !== parentRect.top    ||
@@ -101,6 +119,7 @@
     soft_disarm = true;
     mask.style.opacity = '0';
     lock_off();
+    iframe_blinder.remove();
   };
 
   var maybe_disarm = function keydown(event) {
